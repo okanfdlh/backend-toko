@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class CustomerController extends Controller
 {
@@ -29,15 +30,31 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        $cutomer = new \App\Models\Customer;
-        $cutomer->name = $request->name;
-        $cutomer->email = $request->email;
-        $cutomer->phone_number = $request->phone_number;
+        // Validate incoming request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:customers,email',
+            'phone_number' => 'required|string|max:15',
+            'password' => 'required|string|min:8', // Ensure password is provided
+        ]);
 
-        $cutomer->save();
+        // Create a new customer record
+        $customer = new Customer;
+        $customer->name = $request->name;
+        $customer->email = $request->email;
+        $customer->phone_number = $request->phone_number;
+        $customer->password = Hash::make($request->password); // Hash the password before saving
 
-        return redirect()->route('customer.index')->with('success', 'Customer successfully created');
+        $customer->save();
 
+        // Generate the Bearer token
+        $token = $customer->createToken('YourAppName')->plainTextToken;
+
+        // Return response with token
+        return response()->json([
+            'message' => 'Customer successfully created',
+            'token' => $token,
+        ], 201);
     }
 
     /**
@@ -45,7 +62,7 @@ class CustomerController extends Controller
      */
     public function show(string $id)
     {
-        //
+        // Not implemented
     }
 
     /**
@@ -53,8 +70,8 @@ class CustomerController extends Controller
      */
     public function edit(string $id)
     {
-        $customer= Customer::findOrfail($id);
-        return view('pages.custome.edit',compact('customer'));
+        $customer = Customer::findOrFail($id);
+        return view('pages.customer.edit', compact('customer'));
     }
 
     /**
@@ -68,7 +85,7 @@ class CustomerController extends Controller
             'phone_number' => 'required'
         ]);
 
-        $customer = Customer::findOrfail($id);
+        $customer = Customer::findOrFail($id);
         $customer->update($request->all());
         return redirect()->route('customer.index')->with('success', 'Customer successfully updated');
     }
@@ -78,9 +95,8 @@ class CustomerController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = Customer::findOrFail($id);
-        $user->delete();
+        $customer = Customer::findOrFail($id);
+        $customer->delete();
         return redirect()->route('customer.index');
-
     }
 }

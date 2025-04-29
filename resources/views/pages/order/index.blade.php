@@ -1,9 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'orders')
+@section('title', 'Orders')
 
 @push('style')
-    <!-- CSS Libraries -->
     <link rel="stylesheet" href="{{ asset('library/selectric/public/selectric.css') }}">
 @endpush
 
@@ -17,8 +16,8 @@
                 </div>
                 <div class="section-header-breadcrumb">
                     <div class="breadcrumb-item active"><a href="#">Dashboard</a></div>
-                    <div class="breadcrumb-item"><a href="#">orders</a></div>
-                    <div class="breadcrumb-item">All orders</div>
+                    <div class="breadcrumb-item"><a href="#">Orders</a></div>
+                    <div class="breadcrumb-item">All Orders</div>
                 </div>
             </div>
             <div class="section-body">
@@ -32,7 +31,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>All orders</h4>
+                                <h4>All Orders</h4>
                             </div>
                             <div class="card-body">
                                 <div class="float-right">
@@ -49,59 +48,49 @@
                                 <div class="clearfix mb-3"></div>
 
                                 <div class="table-responsive">
-                                    <table class="table-striped table">
-                                        <tr>
-
-                                            <th>Transaction Time</th>
-                                            <th>Sub Total</th>
-                                            <th>Tax</th>
-                                            <th>Discount</th>
-                                            <th>Payment Amount</th>
-                                            <th>Action</th>
-                                        </tr>
-                                        @foreach ($orders as $order)
+                                    <table class="table table-striped">
+                                        <thead>
                                             <tr>
-
-
-                                                <td>{{ \Carbon\Carbon::parse($order->transaction_time)->format('Y-m-d H:i:s') }}</td>
-
-
-
-                                                <td>
-                                                    {{ $order->sub_total }}
-                                                </td>
-
-                                                <td>
-                                                    {{ $order->tax }}
-                                                </td>
-                                                <td>
-                                                    {{ $order->discount }}
-                                                </td>
-                                                <td>{{ $order->payment_amount }}
-                                                </td>
-                                                <td>
-                                                    <div class="d-flex justify-content-center">
-                                                        <a href='{{ route('order.edit', $order->id) }}'
-                                                            class="btn btn-sm btn-info btn-icon">
-                                                            <i class="fas fa-edit"></i>
-                                                            Edit
-                                                        </a>
-
-                                                        <form action="{{ route('order.destroy', $order->id) }}" method="POST"
-                                                            class="ml-2">
-                                                            <input type="hidden" name="_method" value="DELETE" />
-                                                            <input type="hidden" name="_token"
-                                                                value="{{ csrf_token() }}" />
-                                                            <button class="btn btn-sm btn-danger btn-icon confirm-delete">
-                                                                <i class="fas fa-times"></i> Delete
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                </td>
+                                                <th>Transaction Time</th>
+                                                <th>Customer ID</th>
+                                                <th>Total Item</th>
+                                                <th>Alamat</th>
+                                                <th>Bukti Pembayaran</th>
+                                                <th>Action</th>
                                             </tr>
-                                        @endforeach
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($orders as $order)
+                                                <tr>
+                                                    <td>{{ \Carbon\Carbon::parse($order->transaction_time)->format('Y-m-d H:i:s') }}</td>
+                                                    <td>{{ $order->id_customer }}</td>
+                                                    <td>{{ $order->total_item }}</td>
+                                                    <td>{{ $order->alamat }}</td>
+                                                    <td>
+                                                        @if($order->bukti_pembayaran)
+                                                            <a href="{{ asset('storage/' . $order->bukti_pembayaran) }}" target="_blank">Lihat</a>
+                                                        @else
+                                                            Tidak ada
+                                                        @endif
+                                                    </td>
+                                                    <td>
+                                                        <div class="d-flex justify-content-center">
+                                                            <a href='{{ route('order.edit', $order->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                                <i class="fas fa-edit"></i> Edit
+                                                            </a>
 
-
+                                                            <form action="{{ route('order.destroy', $order->id) }}" method="POST" class="ml-2">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button class="btn btn-sm btn-danger btn-icon confirm-delete">
+                                                                    <i class="fas fa-times"></i> Delete
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
                                     </table>
                                 </div>
                                 <div class="float-right">
@@ -117,9 +106,6 @@
 @endsection
 
 @push('scripts')
-    <!-- JS Libraies -->
     <script src="{{ asset('library/selectric/public/jquery.selectric.min.js') }}"></script>
-
-    <!-- Page Specific JS File -->
     <script src="{{ asset('js/page/features-posts.js') }}"></script>
 @endpush

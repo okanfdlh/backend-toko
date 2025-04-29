@@ -27,22 +27,24 @@ class Order extends Model
     ''');*/
 
     protected $fillable = [
-        'payment_amount',
-        'sub_total',
-        'tax',
-        'discount',
-        'service_charge',
-        'total',
-        'payment_method',
+        // 'payment_amount',
+        // 'sub_total',
+        // 'tax',
+        // 'discount',
+        // 'service_charge',
+        // 'total',
+        'bukti_pembayaran',
         'total_item',
-        'id_kasir',
-        'nama_kasir',
+        // 'id_kasir',
+        'id_customer',
         'transaction_time',
-        'id_reservasi',
-        'order_type',
+        'alamat',
+        // 'order_type',
     ];
 
     public function orderItems(){
         return $this->hasMany(OrderItem::class, 'id_order');
     }
+    protected $with = ['orderItems'];
+
 }

@@ -5,138 +5,89 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
-use App\Models\Reservation;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
-
 class OrderController extends Controller
 {
-
-    // public function saveOrder(Request $request)
-    // {
-    //     $request->validate([
-    //         'payment_amount' => 'required',
-    //         // 'subtotal' => 'required',
-    //         'tax' => 'required',
-    //         'discount' => 'required',
-    //         'service_charge' => 'required',
-    //         'total' => 'required',
-    //         'payment_method' => 'required',
-    //         'total_item' => 'required',
-    //         // 'kasir_id' => 'required',
-    //         // 'kasir_name' => 'required',
-    //         'transaction_time' => 'required',
-    //         'order_items' => 'nullable'
-    //     ]);
-
-    //     $order = Order::create([
-    //         'payment_amount' => $request->payment_amount,
-    //         'sub_total' => $request->sub_total,
-    //         'tax' => $request->tax,
-    //         'discount' => $request->discount,
-    //         'service_charge' => $request->service_charge,
-    //         'total' => $request->total,
-    //         'payment_method' => $request->payment_method,
-    //         'total_item' => $request->total_item,
-    //         'id_kasir' => $request->id_kasir,
-    //         'nama_kasir' => $request->nama_kasir,
-    //         'transaction_time' => $request->transaction_time,
-    //     ]);
-
-    //     foreach ($request->order_items as $item){
-    //         OrderItem::create([
-    //             'id_order' => $order->id,
-    //             'id_product' => $item['id_product'],
-    //             'quantity' => $item['quantity'],
-    //             'price' => $item['price'],
-    //             'total' => 0
-    //         ]);
-    //     }
-    //     return response(['message' => 'success', 'data'=>$order], 200);
-    // }
-
-
-    public function saveOrder(Request $request)
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
+        // Validasi input
         $request->validate([
-            'payment_amount' => 'required',
-            'sub_total' => 'required', // Sesuaikan dengan kebutuhan
-            'tax' => 'required',
-            'discount' => 'required',
-            'service_charge' => 'required',
-            'total' => 'required',
-            'payment_method' => 'required',
-            'total_item' => 'required',
+            'id_customer' => 'required|integer|exists:customers,id', // Memastikan id_customer valid
             'transaction_time' => 'required',
-            'order_items' => 'nullable',
-            'id_reservasi' => 'nullable',
-            'order_type' => 'nullable'
+            'alamat' => 'required|string',
+            'bukti_pembayaran' => 'nullable|image|max:2048', // Validasi file pembayaran
+            'total_item' => 'required|integer',
+            'products' => 'required|array', // Produk yang diorder
+            'products.*.id_product' => 'required|integer|exists:products,id', // Memastikan id_product valid
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.price' => 'required|numeric|min:0',
         ]);
 
-        $orderData = [
-            'payment_amount' => $request->payment_amount,
-            'sub_total' => $request->sub_total,
-            'tax' => $request->tax,
-            'discount' => $request->discount,
-            'service_charge' => $request->service_charge,
-            'total' => $request->total,
-            'payment_method' => $request->payment_method,
-            'total_item' => $request->total_item,
-            'id_kasir' => $request->id_kasir,
-            'nama_kasir' => $request->nama_kasir,
-            'transaction_time' => $request->transaction_time,
-            'id_reservasi' => $request->id_reservasi,
-            'order_type' => $request->order_type
-        ];
-
-        if ($request->order_type == 'reservation') {
-            $reservation = Reservation::create([
-                'customer_name' => $request->customer_name,
-                'customer_phone' => $request->customer_phone,
-                'reservation_date' => $request->reservation_date,
-                'reservation_time' => $request->reservation_time,
-                'notes' => $request->notes,
-                'table_number' => $request->table_number,
-                'status' => $request->status,
-                'reservation_code' => $this->generateReservaitonCode()
+        DB::beginTransaction();
+        try {
+            // Simpan Order
+            $order = Order::create([
+                'id_customer' => $request->id_customer,
+                'transaction_time' => $request->transaction_time,
+                'alamat' => $request->alamat,
+                'bukti_pembayaran' => $request->hasFile('bukti_pembayaran')
+                    ? $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public')
+                    : '',
+                'total_item' => $request->total_item,
             ]);
 
-            $orderData['id_reservasi'] = $reservation->id;
+            // Simpan OrderItem satu per satu
+            foreach ($request->products as $product) {
+                OrderItem::create([
+                    'id_order' => $order->id,
+                    'id_product' => $product['id_product'],
+                    'quantity' => $product['quantity'],
+                    'price' => $product['price'],
+                    // 'total' => $product['quantity'] * $product['price'], // Total harga per item
+                ]);
+            }
+
+            DB::commit();
+
+            // Load relasi orderItems dan kembalikan response
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Order berhasil dibuat!',
+                'data' => $order->load('orderItems') // Memuat relasi orderItems
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal membuat order: ' . $e->getMessage()
+            ], 500);
         }
-
-        $order = Order::create($orderData);
-
-        foreach ($request->order_items as $item) {
-            OrderItem::create([
-                'id_order' => $order->id,
-                'id_product' => $item['id_product'],
-                'quantity' => $item['quantity'],
-                'price' => $item['price'],
-                'total' => 0
-            ]);
-        }
-
-        return response(['message' => 'success', 'data' => $order], 200);
     }
 
-    function generateReservaitonCode()
+    /**
+     * Display the specified resource.
+     */
+    public function show($id)
     {
-        // Generate random string of 6 characters
-        $randomString = Str::random(6);
+        $order = Order::with('orderItems')->find($id);
 
-        // Combine with current timestamp to ensure uniqueness
-        $timestamp = now()->format('Ymd');
+        if (!$order) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Order tidak ditemukan'
+            ], 404);
+        }
 
-        return 'RSV-' . $timestamp . '-' . $randomString;
-    }
-
-    public function getOrderDetail()
-    {
-
-        $orderItem = OrderItem::all();
-        $orderItem->load(['product', 'order']);
-
-        return response(['message' => 'success', 'data' => $orderItem], 200);
+        return response()->json([
+            'status' => 'success',
+            'data' => $order
+        ], 200);
     }
 }

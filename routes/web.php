@@ -45,3 +45,4 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('discount', DiscountController::class);
 });
 
+Route::get('/order/create', [OrderController::class, 'create'])->name('order.create');

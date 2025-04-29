@@ -29,21 +29,18 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('payment_amount');
-            $table->integer('sub_total');
-            $table->integer('tax');
-            $table->integer('discount');
-            $table->integer('service_charge');
-            $table->integer('total');
-            $table->integer('payment_method');
+            $table->integer('bukti_pembayaran');
             $table->integer('total_item');
-            $table->integer('id_kasir');
-            $table->string('nama_kasir');
+            $table->integer('alamat');
+            
+            // Mengubah id_customer menjadi relasi ke tabel customers
+            $table->unsignedBigInteger('id_customer');
+            $table->foreign('id_customer')->references('id')->on('customers')->onDelete('cascade');
+            
             $table->string('transaction_time');
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
