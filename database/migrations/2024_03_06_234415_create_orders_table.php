@@ -29,9 +29,9 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->integer('bukti_pembayaran');
+            $table->string('bukti_pembayaran');
             $table->integer('total_item');
-            $table->integer('alamat');
+            $table->text('alamat');
             
             // Mengubah id_customer menjadi relasi ke tabel customers
             $table->unsignedBigInteger('id_customer');
