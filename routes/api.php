@@ -33,7 +33,8 @@ Route::get('/getProduct', [ProductController::class, 'get']);
 
 // orders api
 Route::post('/order', [OrderController::class, 'store']);
-Route::get('/order/{id}', [OrderController::class, 'show']);
+Route::get('/order/{id_customer}', [OrderController::class, 'show']);
+Route::put('/order/{id}/status', [OrderController::class, 'updateStatus']);
 
 
 //discount api

@@ -35,7 +35,7 @@ class Order extends Model
         // 'total',
         'bukti_pembayaran',
         'total_item',
-        // 'id_kasir',
+        'status',
         'id_customer',
         'transaction_time',
         'alamat',

@@ -32,7 +32,7 @@ return new class extends Migration
             $table->string('bukti_pembayaran');
             $table->integer('total_item');
             $table->text('alamat');
-            
+            $table->string('status')->default('pending');
             // Mengubah id_customer menjadi relasi ke tabel customers
             $table->unsignedBigInteger('id_customer');
             $table->foreign('id_customer')->references('id')->on('customers')->onDelete('cascade');

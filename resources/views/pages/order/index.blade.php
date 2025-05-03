@@ -56,6 +56,7 @@
                                                 <th>Total Item</th>
                                                 <th>Alamat</th>
                                                 <th>Bukti Pembayaran</th>
+                                                <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
                                         </thead>
@@ -74,6 +75,24 @@
                                                         @endif
                                                     </td>
                                                     <td>
+                                                        <form action="{{ route('order.updateStatus', $order->id) }}" method="POST">
+                                                            @csrf
+                                                            @method('PUT')
+                                                            <div class="input-group">
+                                                                <select name="status" class="form-control">
+                                                                    <option value="menunggu" {{ $order->status == 'menunggu' ? 'selected' : '' }}>Menunggu</option>
+                                                                    <option value="diproses" {{ $order->status == 'diproses' ? 'selected' : '' }}>Diproses</option>
+                                                                    <option value="selesai" {{ $order->status == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                                                    <option value="dibatalkan" {{ $order->status == 'dibatalkan' ? 'selected' : '' }}>Dibatalkan</option>
+                                                                </select>
+                                                                <div class="input-group-append">
+                                                                    <button class="btn btn-sm btn-success" type="submit"><i class="fas fa-check"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </td>
+                                                    
+                                                    <td>
                                                         <div class="d-flex justify-content-center">
                                                             <a href='{{ route('order.edit', $order->id) }}' class="btn btn-sm btn-info btn-icon">
                                                                 <i class="fas fa-edit"></i> Edit
@@ -86,6 +105,9 @@
                                                                     <i class="fas fa-times"></i> Delete
                                                                 </button>
                                                             </form>
+                                                            <a href="{{ route('order.show', $order->id) }}" class="btn btn-sm btn-secondary btn-icon ml-2">
+                                                                <i class="fas fa-eye"></i> Detail
+                                                            </a>
                                                         </div>
                                                     </td>
                                                 </tr>

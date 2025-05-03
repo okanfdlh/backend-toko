@@ -26,7 +26,28 @@ class OrderController extends Controller
     {
         return view('pages.order.create');
     }
+    public function updateStatus(Request $request, $id)
+    {
+        $request->validate([
+            'status' => 'required|in:menunggu,diproses,selesai,dibatalkan',
+        ]);
+    
+        $order = Order::findOrFail($id);
+        $order->status = $request->status;
+        $order->save();
+    
+        return redirect()->back()->with('success', 'Status order berhasil diperbarui.');
+    }
+    public function show($id)
+        {
+            // Perbaiki relasi dengan menggunakan nama relasi yang benar
+            $order = Order::with('orderItems.product')->findOrFail($id);
 
+            return view('pages.order.show', compact('order'));
+        }
+
+
+    
 //     /**
 //      * Store a newly created resource in storage.
 //      */

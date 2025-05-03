@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,25 +17,21 @@ class OrderController extends Controller
      */
     public function store(Request $request)
 {
-    // Validasi input umum
     $request->validate([
         'id_customer' => 'required|integer|exists:customers,id',
         'transaction_time' => 'required',
         'alamat' => 'required|string',
         'bukti_pembayaran' => 'nullable|image|max:2048',
         'total_item' => 'required|integer',
-        'products' => 'required|string',  // Mengharuskan field 'products' berupa string JSON
+        'products' => 'required|string',
     ]);
 
-    // Decode 'products' yang berupa string JSON menjadi array
     $products = json_decode($request->products, true);
 
-    // Cek apakah produk yang didecode adalah array
     if (!is_array($products)) {
         return response()->json(['error' => 'Invalid products format'], 422);
     }
 
-    // Validasi field produk
     foreach ($products as $product) {
         if (!isset($product['id_product'], $product['quantity'], $product['price'])) {
             return response()->json(['error' => 'Incomplete product data'], 422);
@@ -43,7 +40,6 @@ class OrderController extends Controller
 
     DB::beginTransaction();
     try {
-        // Simpan Order terlebih dahulu
         $order = Order::create([
             'id_customer' => $request->id_customer,
             'transaction_time' => $request->transaction_time,
@@ -54,8 +50,22 @@ class OrderController extends Controller
             'total_item' => $request->total_item,
         ]);
 
-        // Simpan setiap item produk
         foreach ($products as $product) {
+            // Kurangi stok produk
+            $productModel = Product::find($product['id_product']);
+            if (!$productModel) {
+                DB::rollBack();
+                return response()->json(['error' => 'Produk tidak ditemukan.'], 404);
+            }
+
+            if ($productModel->stok < $product['quantity']) {
+                DB::rollBack();
+                return response()->json(['error' => 'Stok produk tidak mencukupi.'], 400);
+            }
+
+            $productModel->stok -= $product['quantity'];
+            $productModel->save();
+
             OrderItem::create([
                 'id_order' => $order->id,
                 'id_product' => $product['id_product'],
@@ -87,20 +97,45 @@ class OrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
-    {
-        $order = Order::with('orderItems')->find($id);
+    public function show($id_customer)
+{
+    $orders = Order::with(['orderItems.product']) // tambah relasi produk
+                ->where('id_customer', $id_customer)
+                ->orderBy('created_at', 'desc')
+                ->get();
 
-        if (!$order) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Order tidak ditemukan'
-            ], 404);
-        }
-
+    if ($orders->isEmpty()) {
         return response()->json([
-            'status' => 'success',
-            'data' => $order
-        ], 200);
+            'status' => 'error',
+            'message' => 'Order tidak ditemukan'
+        ], 404);
     }
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $orders
+    ], 200);
 }
+
+public function updateStatus(Request $request, $id)
+{
+    $order = Order::find($id);
+
+    if (!$order) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Order tidak ditemukan'
+        ], 404);
+    }
+
+    $order->status = $request->input('status'); // pastikan field `status` ada di database
+    $order->save();
+
+    return response()->json([
+        'status' => 'success',
+        'message' => 'Status order berhasil diperbarui',
+        'data' => $order
+    ], 200);
+}
+
+}    

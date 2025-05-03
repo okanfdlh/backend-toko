@@ -46,3 +46,5 @@ Route::middleware(['auth'])->group(function(){
 });
 
 Route::get('/order/create', [OrderController::class, 'create'])->name('order.create');
+Route::put('/order/{id}/status', [OrderController::class, 'updateStatus'])->name('order.updateStatus');
+Route::get('/order/{id}', [OrderController::class, 'show'])->name('order.show');
