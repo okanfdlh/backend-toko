@@ -14,7 +14,8 @@ class Customer extends Model
         'name',
         'phone_number',
         'password',
-        'email'
+        'email',
+        'saldo'
     ];
 
     public function reservations(){
