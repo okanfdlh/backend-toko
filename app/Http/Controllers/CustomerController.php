@@ -43,6 +43,7 @@ class CustomerController extends Controller
         $customer->name = $request->name;
         $customer->email = $request->email;
         $customer->phone_number = $request->phone_number;
+        $customer->saldo = $request->saldo;
         $customer->password = Hash::make($request->password); // Hash the password before saving
 
         $customer->save();
@@ -78,17 +79,29 @@ class CustomerController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'phone_number' => 'required'
-        ]);
+{
+    // Validasi input, saldo tidak wajib diisi
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required',
+        'phone_number' => 'required',
+        'saldo' => 'nullable|numeric|min:0',  // Saldo tidak wajib, jika ada, harus numeric dan >= 0
+    ]);
 
-        $customer = Customer::findOrFail($id);
-        $customer->update($request->all());
-        return redirect()->route('customer.index')->with('success', 'Customer successfully updated');
+    // Cari customer berdasarkan ID
+    $customer = Customer::findOrFail($id);
+
+    // Jika saldo ada dalam request, update saldo
+    if ($request->has('saldo')) {
+        $customer->saldo = $request->input('saldo');
     }
+
+    // Update data customer lainnya
+    $customer->update($request->except('saldo'));  // Jangan update saldo lagi jika sudah di-update terpisah
+
+    return redirect()->route('customer.index')->with('success', 'Customer successfully updated');
+}
+
 
     /**
      * Remove the specified resource from storage.

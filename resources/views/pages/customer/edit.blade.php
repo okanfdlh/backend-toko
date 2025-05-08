@@ -70,6 +70,10 @@
                                 <label>Phone</label>
                                 <input type="number" class="form-control" name="phone_number" value="{{ $customer->phone_number }}">
                             </div>
+                            <div class="form-group">
+                                <label>Saldo</label>
+                                <input type="number" class="form-control" name="saldo" value="{{ $customer->saldo }}">
+                            </div>
 
                         </div>
 

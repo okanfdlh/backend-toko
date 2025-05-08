@@ -54,6 +54,7 @@
                                             <th>Name</th>
                                             <th>Email</th>
                                             <th>Phone</th>
+                                            <th>Saldo</th>
                                             <th>Action</th>
                                         </tr>
                                         @foreach ($customers as $customer)
@@ -65,6 +66,9 @@
                                                 </td>
                                                 <td>
                                                     {{ $customer->phone_number}}
+                                                </td>
+                                                <td>
+                                                    {{ $customer->saldo}}
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">

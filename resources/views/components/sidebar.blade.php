@@ -74,6 +74,9 @@
             <li>
                 <a href="{{ route('customer.index') }}" class="nav-link"><i class="fas fa-user"></i><span>Pelanggan</span></a>
             </li>
+            <li>
+                <a href="{{ route('deposit.index') }}" class="nav-link"><i class="fas fa-user"></i><span>Deposit</span></a>
+            </li>
 
             {{-- <li>
                 <a href="{{ route('reservation.index')}}" class="nav-link"><i class="fas fa-calendar-alt"></i><span>Reservations</span></a>

@@ -10,7 +10,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\SupplierController;
 Use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\DiscountController;
-
+use App\Http\Controllers\DepositController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,8 +43,13 @@ Route::middleware(['auth'])->group(function(){
     Route::resource('supplier', SupplierController::class);
     Route::resource('inventory', InventoryController::class);
     Route::resource('discount', DiscountController::class);
+    Route::resource('deposit', DepositController::class);
+    
+
+
 });
 
 Route::get('/order/create', [OrderController::class, 'create'])->name('order.create');
 Route::put('/order/{id}/status', [OrderController::class, 'updateStatus'])->name('order.updateStatus');
 Route::get('/order/{id}', [OrderController::class, 'show'])->name('order.show');
+Route::put('/deposit/{deposit}', [DepositController::class, 'update'])->name('deposit.update');
