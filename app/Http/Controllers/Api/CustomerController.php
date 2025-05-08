@@ -119,5 +119,11 @@ class CustomerController extends Controller
 
         return response()->json(['status' => 'success', 'message' => 'Permintaan deposit berhasil dikirim', 'data' => $depositRequest], 201);
     }
-    
+    public function getSaldo($id)
+{
+    $customer = Customer::findOrFail($id); // Mendapatkan data pelanggan berdasarkan ID
+    return response()->json([
+        'saldo' => $customer->saldo
+    ]);
+}
 }

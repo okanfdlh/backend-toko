@@ -58,6 +58,7 @@ Route::post('/customers/{id}/deposit', [CustomerController::class, 'deposit'])->
 Route::get('/getReservations', [ReservationController::class, 'get'])->middleware('auth:sanctum');
 Route::post('/saveReservation', [ReservationController::class, 'store'])->middleware('auth:sanctum');
 Route::post('/updateReservation/{id}', [ReservationController::class, 'updateReservation'])->middleware('auth:sanctum');
+Route::get('/customer/{id}/saldo', [CustomerController::class, 'getSaldo']);
 
 
 
