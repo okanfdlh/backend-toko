@@ -52,7 +52,14 @@
                                                     {{ ucfirst($item->status) }}
                                                 </span>
                                             </td>
-                                            <td>{{ $item->proof ?? '-' }}</td>
+                                            <td>
+                                                @if($item->proof)
+                                                    <img src="{{ asset('storage/' . $item->proof) }}" alt="Proof" width="100">
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
+
                                             <td>{{ $item->created_at->format('d M Y H:i') }}</td>
                                             <td>
                                                 <form action="{{ route('deposit.update', $item->id) }}" method="POST">

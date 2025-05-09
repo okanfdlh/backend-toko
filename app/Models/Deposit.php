@@ -9,11 +9,17 @@ class Deposit extends Model
 {
     use HasFactory;
 
+    // ✅ Tambahkan konstanta status di sini
+    public const PENDING = 'pending';
+    public const APPROVED = 'approved';
+    public const REJECTED = 'rejected';
+
     protected $fillable = [
         'customer_id',
         'amount',
         'note',
         'status',
+        'proof'
     ];
 
     public function customer()
@@ -21,4 +27,3 @@ class Deposit extends Model
         return $this->belongsTo(Customer::class);
     }
 }
-

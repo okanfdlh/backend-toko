@@ -1,13 +1,14 @@
 <?php
 
-use App\Http\Controllers\Api\CustomerController;
-use App\Http\Controllers\Api\DiscountController;
-use App\Http\Controllers\Api\OrderController;
-use App\Http\Controllers\Api\ReservationController;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\DepositController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\CustomerController;
+use App\Http\Controllers\Api\DiscountController;
+use App\Http\Controllers\Api\ReservationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +52,9 @@ Route::post('/loginCustomer', [CustomerController::class, 'login']);
 Route::post('/storeCustomer', [CustomerController::class, 'store']);
 Route::post('/updateCustomer/{id}', [CustomerController::class, 'update'])->middleware('auth:sanctum');
 Route::get('/deleteCustomer/{id}', [CustomerController::class, 'destroy'])->middleware('auth:sanctum');
-Route::post('/customers/{id}/deposit', [CustomerController::class, 'deposit'])->middleware('auth:sanctum');
+// route/api.php
+Route::post('/deposit/{id}', [DepositController::class, 'store']);
+Route::get('/deposits/{id}', [DepositController::class, 'getDepositHistory']);
 
 
 //reservation api

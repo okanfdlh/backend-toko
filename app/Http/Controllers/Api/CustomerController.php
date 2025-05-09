@@ -102,23 +102,23 @@ class CustomerController extends Controller
             'token' => $token, // ← pakai token yang disimpan
         ], 200);
     }
-    public function deposit(Request $request, $id)
-    {
-        $request->validate([
-            'amount' => 'required|numeric|min:0',
-            'note' => 'nullable|string',
-        ]);
+    // public function deposit(Request $request, $id)
+    // {
+    //     $request->validate([
+    //         'amount' => 'required|numeric|min:0',
+    //         'note' => 'nullable|string',
+    //     ]);
 
-        // Create deposit request
-        $depositRequest = DepositRequest::create([
-            'customer_id' => Auth::id(), // pastikan user sudah login
-            'amount' => $request->amount,
-            'note' => $request->note,
-            'status' => DepositRequest::PENDING, // Status awal adalah pending
-        ]);
+    //     // Create deposit request
+    //     $depositRequest = DepositRequest::create([
+    //         'customer_id' => Auth::id(), // pastikan user sudah login
+    //         'amount' => $request->amount,
+    //         'note' => $request->note,
+    //         'status' => DepositRequest::PENDING, // Status awal adalah pending
+    //     ]);
 
-        return response()->json(['status' => 'success', 'message' => 'Permintaan deposit berhasil dikirim', 'data' => $depositRequest], 201);
-    }
+    //     return response()->json(['status' => 'success', 'message' => 'Permintaan deposit berhasil dikirim', 'data' => $depositRequest], 201);
+    // }
     public function getSaldo($id)
 {
     $customer = Customer::findOrFail($id); // Mendapatkan data pelanggan berdasarkan ID
