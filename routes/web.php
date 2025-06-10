@@ -11,19 +11,9 @@ use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\DepositController;
-use App\Http\Controllers\DashboardController; // Pastikan untuk mengimpor DashboardController
+use App\Http\Controllers\DashboardController; 
 use Illuminate\Support\Facades\Route;
 
-/*
-|----------------------------------------------------------------------
-| Web Routes
-|----------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
     return view('pages.auth.login');

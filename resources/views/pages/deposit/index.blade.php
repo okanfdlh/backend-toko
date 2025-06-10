@@ -61,7 +61,7 @@
                                             </td>
 
                                             <td>{{ $item->created_at->format('d M Y H:i') }}</td>
-                                            <td>
+                                            {{-- <td>
                                                 <form action="{{ route('deposit.update', $item->id) }}" method="POST">
                                                     @csrf
                                                     @method('PUT')
@@ -77,7 +77,31 @@
                                                     </div>
                                                 </form>
                                                 
+                                            </td> --}}
+                                            <td>
+                                                <form action="{{ route('deposit.update', $item->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <div class="input-group">
+                                                        <select name="status" class="form-control">
+                                                            <option value="pending" {{ $item->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                                            <option value="approved" {{ $item->status === 'approved' ? 'selected' : '' }}>Approve</option>
+                                                            <option value="rejected" {{ $item->status === 'rejected' ? 'selected' : '' }}>Reject</option>
+                                                        </select>
+                                                        <div class="input-group-append">
+                                                            <button class="btn btn-primary btn-sm" type="submit">Update</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+
+                                                {{-- Delete form --}}
+                                                <form action="{{ route('deposit.destroy', $item->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus deposit ini?');" style="margin-top: 5px;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                                </form>
                                             </td>
+
                                         </tr>
                                     @empty
                                         <tr>

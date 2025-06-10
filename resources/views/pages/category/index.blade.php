@@ -59,7 +59,7 @@
 
                                             <th>Name</th>
                                             <th>Description</th>
-                                            <th>Image</th>
+                                            {{-- <th>Image</th> --}}
                                             <th>Action</th>
                                         </tr>
                                         @foreach ($categories as $category)
@@ -70,9 +70,9 @@
                                                 <td>
                                                     {{ $category->description }}
                                                 </td>
-                                                <td>
+                                                {{-- <td>
                                                     {{ $category->image }}
-                                                </td>
+                                                </td> --}}
                                                 <td>
                                                     <div class="d-flex justify-content-center">
                                                         <a href='{{ route('category.edit', $category->id) }}'
