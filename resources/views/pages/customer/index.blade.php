@@ -68,7 +68,7 @@
                                                     {{ $customer->phone_number}}
                                                 </td>
                                                 <td>
-                                                    {{ $customer->saldo}}
+                                                    {{ number_format($customer->saldo, 0, ',', '.') }}
                                                 </td>
                                                 <td>
                                                     <div class="d-flex justify-content-center">

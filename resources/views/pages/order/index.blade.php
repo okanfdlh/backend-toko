@@ -94,9 +94,9 @@
                                                     
                                                     <td>
                                                         <div class="d-flex justify-content-center">
-                                                            <a href='{{ route('order.edit', $order->id) }}' class="btn btn-sm btn-info btn-icon">
+                                                            {{-- <a href='{{ route('order.edit', $order->id) }}' class="btn btn-sm btn-info btn-icon">
                                                                 <i class="fas fa-edit"></i> Edit
-                                                            </a>
+                                                            </a> --}}
 
                                                             <form action="{{ route('order.destroy', $order->id) }}" method="POST" class="ml-2">
                                                                 @csrf
