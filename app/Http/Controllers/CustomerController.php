@@ -36,6 +36,7 @@ class CustomerController extends Controller
             'email' => 'required|email|unique:customers,email',
             'phone_number' => 'required|string|max:15',
             'password' => 'required|string|min:8', // Ensure password is provided
+            // 'saldo' => 'required|numeric|min:0',
         ]);
 
         // Create a new customer record
@@ -43,19 +44,20 @@ class CustomerController extends Controller
         $customer->name = $request->name;
         $customer->email = $request->email;
         $customer->phone_number = $request->phone_number;
-        $customer->saldo = $request->saldo;
+        $customer->saldo = 0;
         $customer->password = Hash::make($request->password); // Hash the password before saving
 
         $customer->save();
 
         // Generate the Bearer token
-        $token = $customer->createToken('YourAppName')->plainTextToken;
+        // $token = $customer->createToken('YourAppName')->plainTextToken;
 
-        // Return response with token
-        return response()->json([
-            'message' => 'Customer successfully created',
-            'token' => $token,
-        ], 201);
+        // // Return response with token
+        // return response()->json([
+        //     'message' => 'Customer successfully created',
+        //     'token' => $token,
+        // ], 201);
+        return redirect()->route('customer.index')->with('success', 'Customer successfully created');
     }
 
     /**
