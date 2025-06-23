@@ -49,9 +49,9 @@
                 </li>
             </ul> --}}
 
-            {{-- <li>
-                <a href="{{ route('user.index') }}" class="nav-link"><i class="fas fa-users"></i><span>Users</span></a>
-            </li> --}}
+            <li>
+                <a href="{{ route('store.profile') }}" class="nav-link"><i class="fas fa-users"></i><span>Profil</span></a>
+            </li>
 
             <li>
                 <a href="{{ route('category.index') }}" class="nav-link"><i class="fas fa-box"></i><span>Kategori</span></a>

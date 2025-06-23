@@ -12,6 +12,7 @@ use App\Http\Controllers\InventoryController;
 use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\DashboardController; 
+use App\Http\Controllers\StoreProfileController; 
 use Illuminate\Support\Facades\Route;
 
 
@@ -42,4 +43,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/order/{id}', [OrderController::class, 'show'])->name('order.show');
     Route::put('/order/{id}/status', [OrderController::class, 'updateStatus'])->name('order.updateStatus');
     Route::put('/deposit/{deposit}', [DepositController::class, 'update'])->name('deposit.update');
+
+    Route::get('/store-profile', [StoreProfileController::class, 'index'])->name('store.profile');
+    Route::post('/store-profile', [StoreProfileController::class, 'store']);
+    Route::get('/store-profile/edit', [StoreProfileController::class, 'edit'])->name('store.profile.edit');
+    Route::put('/store-profile', [StoreProfileController::class, 'update'])->name('store.profile.update');
 });

@@ -3,12 +3,14 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Api\DepositController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\DepositController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\DiscountController;
+use App\Http\Controllers\StoreProfileController;
 use App\Http\Controllers\Api\ReservationController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -62,6 +64,8 @@ Route::get('/getReservations', [ReservationController::class, 'get'])->middlewar
 Route::post('/saveReservation', [ReservationController::class, 'store'])->middleware('auth:sanctum');
 Route::post('/updateReservation/{id}', [ReservationController::class, 'updateReservation'])->middleware('auth:sanctum');
 Route::get('/customer/{id}/saldo', [CustomerController::class, 'getSaldo']);
+Route::get('/store-profile', [StoreProfileController::class, 'apiGet']);
+Route::post('/store-profile', [StoreProfileController::class, 'apiUpdate']);
 
 
 
