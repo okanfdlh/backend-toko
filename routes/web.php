@@ -14,7 +14,20 @@ use App\Http\Controllers\DepositController;
 use App\Http\Controllers\DashboardController; 
 use App\Http\Controllers\StoreProfileController; 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Response;
 
+Route::get('/image/logo/{filename}', function ($filename) {
+    $path = storage_path('app/public/logo/' . $filename);
+
+    if (!file_exists($path)) {
+        abort(404);
+    }
+
+    return response()->file($path, [
+        'Access-Control-Allow-Origin' => '*',
+        'Content-Type' => mime_content_type($path),
+    ]);
+});
 
 Route::get('/', function () {
     return view('pages.auth.login');

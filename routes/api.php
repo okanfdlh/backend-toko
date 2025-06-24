@@ -11,7 +11,6 @@ use App\Http\Controllers\Api\DiscountController;
 use App\Http\Controllers\StoreProfileController;
 use App\Http\Controllers\Api\ReservationController;
 
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -65,7 +64,9 @@ Route::post('/saveReservation', [ReservationController::class, 'store'])->middle
 Route::post('/updateReservation/{id}', [ReservationController::class, 'updateReservation'])->middleware('auth:sanctum');
 Route::get('/customer/{id}/saldo', [CustomerController::class, 'getSaldo']);
 Route::get('/store-profile', [StoreProfileController::class, 'apiGet']);
-Route::post('/store-profile', [StoreProfileController::class, 'apiUpdate']);
+// Route::post('/store-profile', [StoreProfileController::class, 'apiUpdate']);
+Route::get('/store-profile', [DepositController::class, 'getStoreProfile']);
+
 
 
 
