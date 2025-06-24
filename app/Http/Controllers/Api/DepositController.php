@@ -4,6 +4,7 @@
 
     use App\Http\Controllers\Controller;
     use App\Models\Deposit;
+    use App\Models\StoreProfile;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Auth;
     use Illuminate\Support\Facades\Storage;
@@ -50,5 +51,30 @@ public function getDepositHistory($id)
             'data' => $deposits
         ]);
     }
+    // Mendapatkan profil toko
+    public function getStoreProfile()
+    {
+        $profile = StoreProfile::first();
+
+        if (!$profile) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Profil toko tidak ditemukan'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'owner_name' => $profile->owner_name,
+                'phone_number' => $profile->phone_number,
+                // Pastikan ini adalah route yang bisa diakses dan mengandung header CORS
+                'logo_url' => $profile->logo_url ? url('image/logo/' . $profile->logo_url) : null,
+            ]
+        ]);
+    }
+
+
+
 }
     

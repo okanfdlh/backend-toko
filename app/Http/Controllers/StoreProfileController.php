@@ -77,9 +77,30 @@ class StoreProfileController extends Controller
 
     // API for Flutter
     public function apiGet()
-    {
-        return response()->json(StoreProfile::first());
+{
+    $profile = StoreProfile::first();
+
+    if (!$profile) {
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Profil toko tidak ditemukan',
+        ], 404);
     }
+
+    return response()->json([
+        'status' => 'success',
+        'data' => [
+            'store_name'   => $profile->store_name,
+            'owner_name'   => $profile->owner_name,
+            'phone_number' => $profile->phone_number,
+            'address'      => $profile->address,
+            'logo_url'     => $profile->logo_url
+                ? url('image/logo/' . $profile->logo_url)
+                : null,
+        ]
+    ]);
+}
+
 
     public function apiUpdate(Request $request)
     {
