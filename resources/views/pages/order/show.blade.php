@@ -58,7 +58,7 @@
                                             <th>Product Name</th>
                                             <th>Quantity</th>
                                             <th>Price</th>
-                                            <th>Total</th>
+                                            <th>Total ditambah ongkir</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -67,7 +67,20 @@
                                                 <td>{{ $orderItem->product->name }}</td>
                                                 <td>{{ $orderItem->quantity }}</td>
                                                 <td>{{ number_format($orderItem->price, 2) }}</td>
-                                                <td>{{ number_format($orderItem->total, 2) }}</td>
+                                                <td>
+                                                    @php
+                                                        $total = 0;
+                                                        if (isset($order->orderItems)) {
+                                                            $total = $order->orderItems->sum(function ($item) {
+                                                                return $item->quantity * $item->price;
+                                                            });
+                                                        }
+
+                                                        $ongkir = 5000 + max(0, ($order->total_item - 1) * 2000);
+                                                        $totalBayar = $total + $ongkir;
+                                                    @endphp
+                                                    Rp {{ number_format($totalBayar, 0, ',', '.') }}
+                                                </td>
                                             </tr>
                                         @endforeach
                                     </tbody>

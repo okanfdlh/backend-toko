@@ -112,10 +112,9 @@
                             </table>
                         </div>
 
-                        {{-- Pagination if needed --}}
-                        {{-- <div class="float-right">
-                            {{ $deposit->links() }}
-                        </div> --}}
+                        <div class="d-flex justify-content-end">
+                            {{ $deposit->links('vendor.pagination.bootstrap-4') }}
+                        </div>
                     </div>
                 </div>
             </div>
