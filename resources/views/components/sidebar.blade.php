@@ -72,6 +72,11 @@
             </li>
 
             <li>
+                <a href="{{ route('laporan.index') }}" class="nav-link"><i class="fas fa-list-alt"></i><span>Laporan</span></a>
+
+            </li>
+
+            <li>
                 <a href="{{ route('customer.index') }}" class="nav-link"><i class="fas fa-user"></i><span>Pelanggan</span></a>
             </li>
             <li>

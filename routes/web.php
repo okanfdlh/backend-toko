@@ -13,6 +13,7 @@ use App\Http\Controllers\DiscountController;
 use App\Http\Controllers\DepositController;
 use App\Http\Controllers\DashboardController; 
 use App\Http\Controllers\StoreProfileController; 
+use App\Http\Controllers\LaporanController; 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Response;
 
@@ -61,4 +62,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/store-profile', [StoreProfileController::class, 'store']);
     Route::get('/store-profile/edit', [StoreProfileController::class, 'edit'])->name('store.profile.edit');
     Route::put('/store-profile', [StoreProfileController::class, 'update'])->name('store.profile.update');
+    Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('/laporan/filter', [LaporanController::class, 'filter'])->name('laporan.filter');
+    Route::get('/laporan/export', [LaporanController::class, 'exportPdf'])->name('laporan.export');
 });
