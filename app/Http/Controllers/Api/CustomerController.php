@@ -25,7 +25,7 @@ class CustomerController extends Controller
             'name' => 'required',
             'email' => 'required|email|unique:customers,email',
             'phone_number' => 'required',
-            'password' => 'required|min:6' // Tambahkan validasi password
+            'password' => 'required|min:6',// Tambahkan validasi password
         ]);
 
         // Membuat customer baru dan menyimpan password yang di-hash
@@ -34,6 +34,7 @@ class CustomerController extends Controller
             'email' => $request->email,
             'phone_number' => $request->phone_number,
             'password' => Hash::make($request->password), // Hash password
+            'saldo' => 0, 
         ]);
 
         // Return response
@@ -120,10 +121,10 @@ class CustomerController extends Controller
     //     return response()->json(['status' => 'success', 'message' => 'Permintaan deposit berhasil dikirim', 'data' => $depositRequest], 201);
     // }
     public function getSaldo($id)
-{
-    $customer = Customer::findOrFail($id); // Mendapatkan data pelanggan berdasarkan ID
-    return response()->json([
-        'saldo' => $customer->saldo
-    ]);
-}
+    {
+        $customer = Customer::findOrFail($id); // Mendapatkan data pelanggan berdasarkan ID
+        return response()->json([
+            'saldo' => $customer->saldo
+        ]);
+    }
 }

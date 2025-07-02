@@ -27,6 +27,7 @@ class OrderController extends Controller
             'transaction_time' => 'required|date',
             'alamat' => 'required|string',
             'total_item' => 'required|integer|min:1',
+            'total' => 'required|numeric|min:1',
         ]);
 
         // Validasi produk
@@ -53,6 +54,7 @@ class OrderController extends Controller
                 'alamat' => $request->alamat,
                 'bukti_pembayaran' => $buktiPath,
                 'total_item' => $request->total_item,
+                 'total' => $request->total,
                 'status' => $request->status ?? 'pending', // default pending jika tidak dikirim
             ]);
 

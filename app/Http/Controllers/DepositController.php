@@ -13,7 +13,10 @@ class DepositController extends Controller
     // Menampilkan daftar permintaan deposit
     public function index()
     {
-        $deposit = Deposit::with('customer')->get();
+        $deposit = Deposit::with('customer')
+            ->orderBy('created_at', 'desc') // data terbaru di atas
+            ->paginate(10); // pagination 10 item per halaman
+
         return view('pages.deposit.index', compact('deposit'));
     }
 
