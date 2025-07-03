@@ -41,6 +41,7 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = (int) $request->price;
+        $product->diskon = $request->diskon ?? null;
         $product->stock = (int) $request->stock;
         $product->category_id = $request->category_id;
         $product->image = $filename;
@@ -79,10 +80,12 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric',
+            'diskon' => 'nullable|numeric',
             'stock' => 'required|integer',
             'category_id' => 'required|exists:categories,id', // Pastikan kategori yang dipilih ada di tabel categories
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Ubah menjadi nullable karena tidak selalu diubah
         ]);
+        
 
         // Cari produk berdasarkan ID
         $product = \App\Models\Product::findOrFail($id);
@@ -102,6 +105,7 @@ class ProductController extends Controller
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = (int) $request->price;
+        $product->diskon = $request->diskon ?? null;
         $product->stock = (int) $request->stock;
         $product->category_id = $request->category_id;
 

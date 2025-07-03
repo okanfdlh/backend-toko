@@ -16,21 +16,18 @@ class OrderController extends Controller
         // Ambil data produk
         $rawProducts = $request->input('products');
 
-        // Jika dikirim sebagai string JSON, ubah ke array
         if (is_string($rawProducts)) {
             $rawProducts = json_decode($rawProducts, true);
         }
 
-        // Validasi data utama
         $request->validate([
             'id_customer' => 'required|integer|exists:customers,id',
             'transaction_time' => 'required|date',
             'alamat' => 'required|string',
             'total_item' => 'required|integer|min:1',
-            'total' => 'required|numeric|min:1',
+            // 'total' dihapus dari validasi, karena dihitung otomatis
         ]);
 
-        // Validasi produk
         if (empty($rawProducts) || !is_array($rawProducts)) {
             return response()->json([
                 'status' => 'error',
@@ -41,21 +38,23 @@ class OrderController extends Controller
         DB::beginTransaction();
 
         try {
-            // Simpan bukti pembayaran jika ada
             $buktiPath = null;
             if ($request->hasFile('bukti_pembayaran')) {
                 $buktiPath = $request->file('bukti_pembayaran')->store('bukti_pembayaran', 'public');
             }
 
-            // Buat order baru
+            // Hitung total harga keseluruhan dengan diskon
+            $totalHarga = 0;
+
+            // Order dibuat dulu supaya kita dapat ID-nya
             $order = Order::create([
                 'id_customer' => $request->id_customer,
                 'transaction_time' => $request->transaction_time,
                 'alamat' => $request->alamat,
                 'bukti_pembayaran' => $buktiPath,
                 'total_item' => $request->total_item,
-                 'total' => $request->total,
-                'status' => $request->status ?? 'pending', // default pending jika tidak dikirim
+                'total' => 0, // sementara, akan diupdate setelah loop
+                'status' => $request->status ?? 'pending',
             ]);
 
             foreach ($rawProducts as $product) {
@@ -69,7 +68,6 @@ class OrderController extends Controller
                     ], 400);
                 }
 
-                // CAST ke integer sebelum perbandingan
                 $requestedQty = (int) $product['quantity'];
                 $availableStock = (int) $productModel->stock;
 
@@ -85,15 +83,28 @@ class OrderController extends Controller
                 $productModel->stock -= $requestedQty;
                 $productModel->save();
 
-                // Simpan item order
+                // Hitung harga diskon jika ada
+                $hargaSatuan = $productModel->price;
+                if (!is_null($productModel->diskon)) {
+                    $diskon = (float)$productModel->diskon;
+                    $hargaSatuan -= ($hargaSatuan * ($diskon / 100));
+                }
+
+                $totalPerItem = $requestedQty * $hargaSatuan;
+                $totalHarga += $totalPerItem;
+
                 OrderItem::create([
                     'id_order' => $order->id,
                     'id_product' => $product['id_product'],
                     'quantity' => $requestedQty,
-                    'price' => $product['price'],
-                    'total' => $requestedQty * $product['price'],
+                    'price' => $hargaSatuan,
+                    'total' => $totalPerItem,
                 ]);
             }
+
+            // Update total harga order
+            $order->total = $totalHarga;
+            $order->save();
 
             DB::commit();
 

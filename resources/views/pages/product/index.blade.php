@@ -57,6 +57,7 @@
                                             <th>Category</th>
                                             <th>Description</th>
                                             <th>Price</th>
+                                            <th>Diskon</th>
                                             <th>Stock</th>
                                             <th>Action</th>
                                         </tr>
@@ -82,6 +83,9 @@
 
                                                 <td>
                                                     {{ $product->price }}
+                                                </td>
+                                                <td>
+                                                    {{ $product->diskon }}
                                                 </td>
                                                 <td>
                                                     {{ $product->stock }}

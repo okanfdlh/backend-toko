@@ -81,7 +81,19 @@
                                     </div>
                                 @enderror
                             </div>
-
+                            <div class="form-group">
+                                <label>Diskon</label>
+                                <input type="number"
+                                    class="form-control @error('diskon')
+                                is-invalid
+                            @enderror"
+                                    name="diskon">
+                                @error('diskon')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
                             <div class="form-group">
                                 <label>Stock</label>
                                 <input type="number"

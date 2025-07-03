@@ -49,33 +49,43 @@ class LaporanController extends Controller
 public function exportPdf(Request $request)
 {
     $periode = $request->input('periode');
-    $tanggal = $request->input('tanggal');
+    $tanggalInput = $request->input('tanggal');
 
     $orders = Order::query();
 
-    if ($tanggal) {
-        $tanggal = Carbon::parse($tanggal);
-        switch ($periode) {
-            case 'harian':
-                $orders->whereDate('transaction_time', $tanggal);
-                break;
-            case 'mingguan':
-                $orders->whereBetween('transaction_time', [
-                    $tanggal->copy()->startOfWeek(),
-                    $tanggal->copy()->endOfWeek(),
-                ]);
-                break;
-            case 'bulanan':
-                $orders->whereMonth('transaction_time', $tanggal->month)
-                       ->whereYear('transaction_time', $tanggal->year);
-                break;
-        }
+    // Gunakan tanggal saat ini jika tidak ada input
+    $tanggal = $tanggalInput ? Carbon::parse($tanggalInput) : now();
+
+    switch ($periode) {
+        case 'harian':
+            $orders->whereDate('transaction_time', $tanggal);
+            break;
+        case 'mingguan':
+            $orders->whereBetween('transaction_time', [
+                $tanggal->copy()->startOfWeek(),
+                $tanggal->copy()->endOfWeek(),
+            ]);
+            break;
+        case 'bulanan':
+            $orders->whereMonth('transaction_time', $tanggal->month)
+                   ->whereYear('transaction_time', $tanggal->year);
+            break;
+        default:
+            // Default fallback: ambil hari ini
+            $orders->whereDate('transaction_time', $tanggal);
+            break;
     }
 
     $orders = $orders->with('orderItems.product')->get();
 
-    $pdf = PDF::loadView('pages.laporan.pdf', compact('orders', 'periode', 'tanggal'));
+    $pdf = PDF::loadView('pages.laporan.pdf', [
+        'orders' => $orders,
+        'periode' => $periode,
+        'tanggal' => $tanggal,
+    ]);
+
     return $pdf->download("laporan-penjualan-{$periode}-{$tanggal->format('Y-m-d')}.pdf");
 }
+
 
 }

@@ -17,10 +17,12 @@ class Product extends Model
         'description',
         'image',
         'price',
+        'diskon',
         'stock',
     ];
 
-    public function category(){
+    public function category(): BelongsTo
+    {
         return $this->belongsTo(Category::class);
     }
 
